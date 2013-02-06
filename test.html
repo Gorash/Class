@@ -1,0 +1,72 @@
+<html>
+<head>
+<script src="./class.js"></script>
+<script>
+
+var t1 = Class({
+	Name: 'test.test',
+	Class: {
+		v0: 27,
+		m1: function () {
+			console.log(0);
+			this.Super();
+		},
+		Constructor: function (a) {
+			this.v33 = a;
+		}
+	}
+});
+
+var t2 = Class({
+	Name: 'test1',
+	Class: {
+		v1: 1,
+		m1: function () {
+		x = 3;
+			console.log(1);
+			this.Super();
+		}
+	},
+	Inherits: [t1]
+});
+
+var t3 = Class({
+	Name: 'test2',
+	Class: {
+		v2: 2
+	},
+	Inherits: [t2]
+});
+
+var t4 = Class({
+	Name: 'test3',
+	Class: {
+		v0: 0,
+		v3: 3,
+		m1: function () {
+			console.log(3);
+			this.Super();
+		},
+		Constructor: function () {
+			this.v0 = 999;
+		}
+	},
+	Inherits: [t3]
+});
+
+var a = new t1();
+console.log(a);
+var b = new t1();
+console.log(b);
+b.m1();
+var d = new t2();
+console.log(d);
+d.m1();
+var c = new (Class('test3'))(33);
+console.log(c);
+c.m1();
+</script>
+</head>
+<body>
+</body>
+</html>
