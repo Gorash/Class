@@ -1,6 +1,9 @@
 /**
-Christophe Matthieu
-
+* Class.js
+* MIT licensed
+* Christophe Matthieu
+* tof.matthieu@gmail.com
+* If you use self software, please send me an email.
 
 "Class" is a class builder with managment of multiple inheritance.
 Each method can access its parent using the "Super" method (eg. this.Super(arg1, arg2);).
@@ -82,8 +85,8 @@ var Class = function (opts) {
 	if (this !== window) {
 		return ErrorDispatch("CallError", "Create an instance of 'Class' (don't use \'new\') for call the class builder: '"+(opts && opts.Name ? opts.Name : opts)+"'");
 	}
-	if (typeof opts === "number") {
-		return Class._Ids[opts] || ErrorDispatch("IdError", "Cannot find the Class Id '"+opts+"'");
+	if (!isNaN(+opts)) {
+		return Class._Ids[+opts] || ErrorDispatch("IdError", "Cannot find the Class Id '"+opts+"'");
 	}
 	if (typeof opts === "string") {
 		for(var key = 0; key < Class._Ids.length ; key++)
@@ -92,8 +95,9 @@ var Class = function (opts) {
 		return ErrorDispatch("NameError", "Cannot find the ClassName '"+opts+"'");
 	}
 	
-	/* preinit variables */
-	var _Name = opts.Name ? opts.Name+'' : null;
+	/* init variables */
+	var _Id = Class._Ids.length;
+	var _Name = opts.Name;
 	var _Class = opts.Class || {};
 	var _Inherits = opts.Inherits || (opts.Inherit ? [opts.Inherit] : []);
 	var _Interfaces = opts.Interfaces || (opts.Interface ? [opts.Interface] : []);
@@ -130,21 +134,19 @@ var Class = function (opts) {
 			return ErrorDispatch("ValueError", "One Inherit is undefined. (Inherits["+key+"])");
 	}
 	
-	/* init variables */
-	var _NameEscape = _Name && ('"'+_Name.replace(/"/, '\\"')+'"') || null;
+	/* init constructor */
 	var _Constructor = (_Class.hasOwnProperty('Constructor') && typeof _Class.Constructor === 'function' ? _Class.Constructor : false) || 
 						(opts.hasOwnProperty('Constructor') && typeof opts.Constructor === 'function' ? opts.Constructor : false) || 
 						(_Inherits.length ? _Inherits[_Inherits.length-1].Constructor : false) ||
 						function () {};
-	var _Id = Class._Ids.length;
 	
 	/* create class */
-	var newClass = eval('(Object[\''+(_Name ? _NameEscape : _Name)+'\'] = function() {'+
-		'if(this === window) return eval("new Class._Ids['+_Id+']("+[].slice.call(arguments).join(",")+")");'+
-		'Class._Ids['+_Id+'].Constructor.apply(this, arguments);'+
-		'return this;'+
-	'})');
-	newClass.toString = function () {return '[Class: '+(_Name ? _NameEscape : _Name)+']';};
+	var newClass = eval('var object={}; object[\'"'+(_Name||_Id)+'"\'] = function() {var self = this;'+
+		'if(!(this instanceof Class._Ids['+_Id+'])){var self = {}; self.__proto__ = Class._Ids['+_Id+'].prototype;}'+
+		'Class._Ids['+_Id+'].Constructor.apply(self, Array.prototype.slice.call(arguments,0));'+
+		'return self;'+
+	'}');
+	newClass.toString = function () {return '[Class: '+(_Name||_Id)+']';};
 	newClass.Inherits = _Inherits;
 	newClass.Constructor = _Constructor;
 	newClass.Methods = {};
