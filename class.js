@@ -245,7 +245,7 @@ var Class = function (opts) {
 	
 	/* check interfaces */
 	for (var key in _Interfaces) {
-		if (_Interfaces.hasOwnProperty(key))
+		if (_Interfaces.hasOwnProperty(key)) {
 			var _Interface = _Interfaces[key];
 			for (var method in _Interface.prototype)
 				if (_Interface.hasOwnProperty(method) && 
@@ -255,6 +255,7 @@ var Class = function (opts) {
 					  !typeof newClass.prototype[method] !== 'function'))) {
 					return ErrorDispatch("Interface", "Cannot find the method or variable '"+method+"' of the interface '"+(_Interface.Name || _Interface)+"'");
 				}
+		}
 	}
 	
 	Class._Ids.push(newClass);
